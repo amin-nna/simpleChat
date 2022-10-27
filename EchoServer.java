@@ -22,7 +22,7 @@ public class EchoServer extends AbstractServer
   /**
    * The default port to listen on.
    */
-  final public static int DEFAULT_PORT = 5555;
+  final public static int DEFAULT_PORT = 80;
   
   //Constructors ****************************************************
   
@@ -83,7 +83,7 @@ public class EchoServer extends AbstractServer
    */
   public static void main(String[] args) 
   {
-    int port = 0; //Port to listen on
+   int port = 0; //Port to listen on
 
     try
     {
