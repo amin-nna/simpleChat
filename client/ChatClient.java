@@ -8,6 +8,8 @@ import ocsf.server.AbstractServer;
 import common.ChatIF;
 import ocsf.client.AbstractClient;
 
+
+
 /**
  * This class overrides some of the methods defined in the abstract
  * superclass in order to give more functionality to the client.
@@ -27,7 +29,7 @@ public class ChatClient extends AbstractClient
    */
   ChatIF clientUI;
   String login_id;
-  AbstractServer serveur;
+  
 
   
   //Constructors ****************************************************
@@ -59,18 +61,9 @@ public class ChatClient extends AbstractClient
    */
   public void handleMessageFromServer(Object msg) {
 	String msgString = (String) msg;
- 
-	if ( msgString.startsWith("#")) {
-		handleCommandServer(msgString);
-	}
-	else {
-		try {
-			sendToServer(msgString);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}    	  
+	clientUI.display(msgString);
+		
+	   	  
   }
 
   /**
@@ -94,49 +87,12 @@ public class ChatClient extends AbstractClient
     }
     catch(IOException e)
     {
-      clientUI.display
-        ("Could not send message to server.  Terminating client.");
+      clientUI.display("Could not send message to server.  Terminating client.");
       quit();
     }
+    
   }
-  private void handleCommandServer (String cmd) {
-	  if ( cmd.equals("#quit")) {
-		  //instructions pour quit()
-	  }
-	  else if ( cmd.equals("#stop")) {
-		serveur.stopListening();
-	  }
-	  else if ( cmd.equals("#close")) {
-		  try {
-			serveur.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	  }
-	  
-	  else if ( cmd.equals("#start")) {
-			try {
-				serveur.listen();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		  }
-	  else if ( cmd.startsWith("#setport")) {
-		  if ( serveur.isListening()) {
-			  
-			  clientUI.display("Error, the serveur is running");
-		  }
-		  else {
-			  int cmdPort = Integer.parseInt(cmd.substring(cmd.indexOf('<') + 1, cmd.indexOf('>')));
-			  this.setPort(cmdPort);
-		  }
-	  }
-	  else if ( cmd.equals("#getport")) {
-		  clientUI.display("Le numéro de port actuel est " + serveur.getPort());
-	  }
-	}
+ 
   
   private void handleCommandClient (String cmd) {
 	  
@@ -259,9 +215,10 @@ public class ChatClient extends AbstractClient
 	protected void connectionEstablished() {
   		//Envoyer "#login <loginid>" au serveur
   		String messageToServer = "#login <"+this.login_id+">";
-  		clientUI.display(this.login_id+" has logged on");
+  		
   		try {
 			sendToServer(messageToServer);
+			clientUI.display(this.login_id+" has logged on");
 		} catch (IOException e) {
 			// Try catch block
 			e.printStackTrace();

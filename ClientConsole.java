@@ -29,12 +29,9 @@ public class ClientConsole implements ChatIF
   
   //Instance variables **********************************************
   
-  /**
-   * The instance of the client that created this ConsoleChat.
-   */
   ChatClient client;
-  
-  
+  ChatIF clientUI;
+ 
   
   /**
    * Scanner to read from the console
@@ -86,7 +83,7 @@ public class ClientConsole implements ChatIF
       while (true) 
       {
         message = fromConsole.nextLine();
-        display(message);
+        //client.handleMessageFromClientUI(message);
         client.handleMessageFromClientUI(message);
       }
     } 
@@ -120,7 +117,7 @@ public class ClientConsole implements ChatIF
   {
 	String login_id = "loginid";
     String host = "";
-    int port = 0;
+    int port = 80;
 
 
     try

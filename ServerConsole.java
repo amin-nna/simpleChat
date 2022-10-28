@@ -1,14 +1,16 @@
+import java.io.IOException;
 import java.util.Scanner;
 
-import client.ChatClient;
 import common.ChatIF;
+import ocsf.client.AbstractClient;
 
+import client.ChatClient;
 
 /**
  * @author amina_anna
  *
  */
-public class ServerConsole implements ChatIF {
+public class ServerConsole implements ChatIF{
 	  //Class variables *************************************************
 	  
 	  /**
@@ -22,21 +24,39 @@ public class ServerConsole implements ChatIF {
 	   * The instance of the client that created this ConsoleChat.
 	   */
 
-	  ChatClient clientServer;
+	  EchoServer sv;
 	  ChatIF clientUI;
+	  String login_id = "Server";
+	  String host = "localhost";
+	  int port = DEFAULT_PORT;
+
 	  
 	  
 	  
 	  /**
 	   * Scanner to read from the console
 	   */
-	  Scanner fromConsole; 
+	  Scanner fromConsole = new Scanner(System.in);; 
 	  
-	  public ServerConsole () {
-		  
+	  public ServerConsole (int port) {
+		  sv = new EchoServer(port);
+		  // Create scanner object to read from console
+		  fromConsole = new Scanner(System.in); 
+		  //System.out.println("Prepare to listen");
+		  try {
+			sv.listen();
+			//System.out.println("Server listening");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	  }
 	  
-	 /**
+	 public ServerConsole() {
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
 	   * This method waits for input from the console.  Once it is 
 	   * received, it sends it to the server's message handler.
 	   */
@@ -50,11 +70,14 @@ public class ServerConsole implements ChatIF {
 	      while (true) 
 	      {
 	        message = fromConsole.nextLine();
-	        clientServer.handleMessageFromServer(message);
+	        
+	        //System.out.println("On va handle "+ message);
+	        sv.handleMessageFromServer(message);
 	      }
 	    } 
-	    catch (Exception ex) 
+	    catch (Exception ex)
 	    {
+	    	 ex.printStackTrace();
 	      System.out.println
 	        ("Unexpected error while reading from console!");
 	    }
@@ -70,10 +93,23 @@ public class ServerConsole implements ChatIF {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		ServerConsole chatServer= new ServerConsole();
+	public static void main(String[] args) 
+	  {
+	   int port = DEFAULT_PORT; //Port to listen on
+
+	    try
+	    {
+	      port = Integer.parseInt(args[0]); //Get port from command line
+	    }
+	    catch(Throwable t)
+	    {
+	      port = DEFAULT_PORT; //Set port to 5555 (80)
+	    }
 		
+	   
+	    ServerConsole chatServer= new ServerConsole(port);
+	    //System.out.println("Created the server");
+	    
 		try {
 			chatServer.accept();
 			
@@ -83,6 +119,7 @@ public class ServerConsole implements ChatIF {
 	    	  System.out.println("Nothing have been entered");
 	      }
 		
-	}
+	    
+	  }
 
 }
