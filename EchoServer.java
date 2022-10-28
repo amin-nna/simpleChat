@@ -18,6 +18,7 @@ import ocsf.server.*;
 public class EchoServer extends AbstractServer 
 {
   //Class variables *************************************************
+	final public String loginKey="loginkey";
   
   /**
    * The default port to listen on.
@@ -49,7 +50,17 @@ public class EchoServer extends AbstractServer
     (Object msg, ConnectionToClient client)
   {
     System.out.println("Message received: " + msg + " from " + client);
-    this.sendToAllClients(msg);
+    
+    String msgString = (String)msg;
+    
+    if ( msgString.startsWith("#login")) {
+    	String loginID = msgString.substring(msgString.indexOf('<') + 1, msgString.indexOf('>'));
+    	client.setInfo(loginKey, loginID);
+    }
+    else {
+    	this.sendToAllClients(client.getInfo(loginKey) + " : " + msg +"\n");
+    }
+    
   }
     
   /**
@@ -72,6 +83,17 @@ public class EchoServer extends AbstractServer
       ("Server has stopped listening for connections.");
   }
   
+ 
+	protected void clientConnected() {
+		System.out.println("A client is connected");
+	}
+  
+  
+	protected void clientDisconnected() {
+		System.out.println("A client is disconnected");
+	}
+
+  
   //Class methods ***************************************************
   
   /**
@@ -91,7 +113,7 @@ public class EchoServer extends AbstractServer
     }
     catch(Throwable t)
     {
-      port = DEFAULT_PORT; //Set port to 5555
+      port = DEFAULT_PORT; //Set port to 5555 (80)
     }
 	
     EchoServer sv = new EchoServer(port);
