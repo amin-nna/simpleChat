@@ -86,7 +86,7 @@ public class ServerConsole implements ChatIF{
 	@Override
 	public void display(String message) {
 		// TODO Auto-generated method stub
-		System.out.println("SERVER MSG> " + message);
+		System.out.println(message);
 
 	}
 

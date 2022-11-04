@@ -61,7 +61,12 @@ public class ChatClient extends AbstractClient
    */
   public void handleMessageFromServer(Object msg) {
 	String msgString = (String) msg;
-	clientUI.display(msgString);
+	if ( msgString .startsWith("#")) {
+		
+	}
+	else {
+		clientUI.display(msgString);
+	}
 		
 	   	  
   }
@@ -80,7 +85,7 @@ public class ChatClient extends AbstractClient
     		handleCommandClient(message);
     	}
     	else {
-    		clientUI.display(message);
+    		//clientUI.display(message);
     		sendToServer(message);
     	}
      
@@ -102,17 +107,20 @@ public class ChatClient extends AbstractClient
 		  quit();
 	  }
 	  else if ( cmd.equals("#logoff")) {
-		  //Il yaura une déconnexion sans fermeture
-		  try {
-			  if ( this.isConnected()) {
-				  this.closeConnection();  
-			  }
-			  else {
-				  clientUI.display("The client is already disconnected.");
-			  }	  
+		  if (this.isConnected()) {
+			  //String messageToServer = "#logoff <"+this.login_id+">";
+		  		try {
+					//sendToServer(messageToServer);
+					this.closeConnection();
+				} catch (IOException e) {
+					// Try catch block
+					e.printStackTrace();
+				}
+			  
+			  
 		  }
-		  catch(IOException e){  
-			  clientUI.display("Error when trying to check if client connected");
+		  else {
+			  clientUI.display("The client is already disconnected.");
 		  }
 		  
 	  }
@@ -142,7 +150,13 @@ public class ChatClient extends AbstractClient
 	  else if ( cmd.equals("#login")) {
 		  //Si le client n'est pas déjà connecté
 		  if ( this.isConnected()) {
-			  clientUI.display("Error, the client is connected");
+			  clientUI.display("Error, the client is already connected");
+			  try {
+				sendToServer(cmd);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		  }
 		  else {
 			    try {
@@ -156,16 +170,13 @@ public class ChatClient extends AbstractClient
 		  
 	  }
 	  else if ( cmd.equals("#gethost")) {
-		  clientUI.display("Le nom d'hote actuel est ");
+		  clientUI.display("Le nom d'hote actuel est " + this.getHost());
 	  }
 	  else if ( cmd.equals("#getport")) {
-		  clientUI.display("Le numéro de port actuel est ");
+		  clientUI.display("Le numéro de port actuel est " + this.getPort());
 	  }
-	  else if ( cmd.equals("#stop")) {
-		 
-	  }
-	  else if ( cmd.equals("#close")) {
-		  
+	  else {
+		  clientUI.display("Commande entrée non reconue, veuillez réessayer.");
 	  }
 	}
   
@@ -192,7 +203,7 @@ public class ChatClient extends AbstractClient
 	 */
   	@Override
 	protected void connectionClosed() {
-  		clientUI.display("The connexion has been closed");
+		clientUI.display("The connexion has been closed");
 	}
 
 	/**
@@ -201,12 +212,10 @@ public class ChatClient extends AbstractClient
 	 * overridden by subclasses.
 	 * 
 	 * @param exception
-	 *            the exception raised.
+	 * the exception raised.
 	 */
   	@Override
 	protected void connectionException(Exception exception) {
-  		//On va utiliser notre méthode display de ClientConsole
-  		//On va utiliser notre objet de type ClientConsole
   		clientUI.display("The server has shut down");
   		System.exit(0);
 	}
