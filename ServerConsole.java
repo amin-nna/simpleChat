@@ -7,7 +7,7 @@ import ocsf.client.AbstractClient;
 import client.ChatClient;
 
 /**
- * @author amina_anna
+ * @author Amina Anna 300227147
  *
  */
 public class ServerConsole implements ChatIF{
